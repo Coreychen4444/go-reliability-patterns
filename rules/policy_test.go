@@ -8,14 +8,14 @@ import (
 
 var testRules = RuleSet{
 	Allow: []AllowEntry{
-		{ID: "allow-account", Dimension: Account, Value: "vip-1"},
+		{ID: "allow-account", Dimension: Account, Value: "acct-trusted"},
 		{ID: "allow-nickname", Dimension: Nickname, Value: "Alice"},
 		{ID: "allow-office", Dimension: IP, Value: "10.0.0.0/8"},
 	},
 	Deny: []DenyRule{
 		{ID: "deny-location", Priority: 10, Location: "xx"},
 		{ID: "deny-card-in-yy", Priority: 20, Location: "YY", BankCard: "4111 1111 1111 1111"},
-		{ID: "deny-vip", Priority: 5, Account: "vip-1"}, // never fires: vip-1 is allowlisted
+		{ID: "deny-trusted", Priority: 5, Account: "acct-trusted"}, // never fires: acct-trusted is allowlisted
 		{ID: "deny-host", Priority: 30, IP: "203.0.113.7"},
 		{ID: "deny-net-a", Priority: 1, IP: "198.51.100.0/24"},
 		{ID: "deny-net-b", Priority: 1, IP: "198.51.100.0/25"},
@@ -37,8 +37,8 @@ func TestEvaluate(t *testing.T) {
 		dim    Dimension
 	}{
 		{"nothing matches", Request{Account: "bob", Location: "SG"}, NoMatch, "", 0},
-		{"allowlist beats deny rule", Request{Account: "vip-1", Location: "XX"}, Allowlisted, "allow-account", Account},
-		{"account before nickname and ip", Request{Account: "vip-1", Nickname: "alice", IP: ip("10.1.2.3")}, Allowlisted, "allow-account", Account},
+		{"allowlist beats deny rule", Request{Account: "acct-trusted", Location: "XX"}, Allowlisted, "allow-account", Account},
+		{"account before nickname and ip", Request{Account: "acct-trusted", Nickname: "alice", IP: ip("10.1.2.3")}, Allowlisted, "allow-account", Account},
 		{"nickname before ip", Request{Nickname: "alice", IP: ip("10.1.2.3")}, Allowlisted, "allow-nickname", Nickname},
 		{"nickname ignores case and spaces", Request{Nickname: "  ALICE "}, Allowlisted, "allow-nickname", Nickname},
 		{"ip allowlist prefix", Request{IP: ip("10.200.0.1"), Location: "XX"}, Allowlisted, "allow-office", IP},
