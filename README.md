@@ -1,3 +1,5 @@
+English | [简体中文](README.zh-CN.md)
+
 # go-reliability-patterns
 
 Three backend reliability patterns in Go, each with table-driven tests, a
